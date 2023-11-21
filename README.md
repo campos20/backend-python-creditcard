@@ -1,6 +1,6 @@
 # backend-python-creditcard
 
-Sample backend in python for credit cards
+Sample backend in python for credit cards.
 
 ## Requirements
 
@@ -11,6 +11,12 @@ Sample backend in python for credit cards
 ## Get started
 
 This assumes you already closed the repo and navigated to it.
+
+- Navigate to the app folder
+
+```bash
+cd app
+```
 
 - Install dependencies.
 

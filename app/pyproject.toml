@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "backend-python-creditcard"
+name = "app"
 version = "0.1.0"
 description = ""
 authors = ["Alexandre Henrique Afonso Campos <camposalexandreh@gmail.com>"]
@@ -10,6 +10,9 @@ python = "^3.11"
 fastapi = "^0.104.1"
 uvicorn = {extras = ["standard"], version = "^0.24.0.post1"}
 
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.11.0"
 
 [build-system]
 requires = ["poetry-core"]
