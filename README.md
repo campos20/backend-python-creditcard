@@ -6,26 +6,40 @@ Sample backend in python for credit cards
 
 - Python 3.11 (you can use pyenv to select correct version).
 
-  And one of the following
-
-- [poetry](https://python-poetry.org/)
 - [virtualenv](https://pypi.org/project/virtualenv/)
 
 ## Get started
 
+This assumes you already closed the repo and navigated to it.
+
 - Install dependencies.
 
-  - Using poetry
+We will be using poetry on top of virtualenv. You need to activate the virtualenv then start using poetry.
 
-    Poetry can automagically manage virtual environments for you. If you have it installed in your system, you can just use `poetry install`.
+```bash
+python3 -m virtualenv venv
+source venv/bin/activate
+pip3 install poetry
+poetry install
+```
 
-  - Using virtualenv
+## Local run
 
-    With the virtual env option, we also use poetry, but it will be contained withing the virtual environment.
+With the virtualenv activated, you can use
 
-    ```bash
-    python3 -m virtualenv venv
-    source venv/bin/activate
-    pip3 install poetry
-    poetry install
-    ```
+```bash
+uvicorn main:app --reload
+```
+
+Visit [http://localhost:8000/docs](http://localhost:8000/docs).
+
+## Activate the virtualenv without installing
+
+You only need to run `poetry install` on your first run (or if any package was added to the project).
+
+To activate the virtualenv without installing, you just need to run
+
+```bash
+source venv/bin/activate
+uvicorn main:app --reload
+```
