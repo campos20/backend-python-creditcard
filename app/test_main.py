@@ -46,9 +46,23 @@ def test_create_credit_card_missing_property(
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_list_credit_card():
-    response = client.get("/api/v1/credit-cards")
-    assert response.status_code == status.HTTP_200_OK
+@parameterized.expand(
+    [
+        (None, None, status.HTTP_200_OK),  # page and size are optional
+        (1, 10, status.HTTP_200_OK),  # valid page size
+        (0, 10, status.HTTP_422_UNPROCESSABLE_ENTITY),  # page should be >= 1
+        (1, 101, status.HTTP_422_UNPROCESSABLE_ENTITY),  # page_size should be <= 100
+    ]
+)
+def test_list_credit_card(page, page_size, stauts_code):
+    params = {}
+    if page is not None:
+        params["page"] = page
+    if page_size is not None:
+        params["page_size"] = page_size
+
+    response = client.get("/api/v1/credit-cards", params=params)
+    assert response.status_code == stauts_code
 
 
 @parameterized.expand(

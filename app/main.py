@@ -1,4 +1,5 @@
-from fastapi import FastAPI, status, Depends
+from typing import Annotated
+from fastapi import FastAPI, Query, status, Depends
 from config.dependencies_config import get_db
 from schemas import CreditCardCreate
 
@@ -19,7 +20,9 @@ def create_credit_card(
 
 @app.get("/api/v1/credit-cards")
 def list_credit_cards(
-    page: int = 1, page_size: int = 10, db: Session = Depends(get_db)
+    page: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1, le=100)] = 10,
+    db: Session = Depends(get_db),
 ):
     return credit_card_service.list_credit_cards(page, page_size, db)
 
