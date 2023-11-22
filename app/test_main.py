@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from fastapi import status
 
-from parameterized import parameterized, parameterized_class
+from parameterized import parameterized
 
 from main import app
 
@@ -24,10 +24,10 @@ def test_create_credit_card():
 
 @parameterized.expand(
     [
-        (None, "card_holder", "expiration_date", "cvv"),
-        ("card_number", None, "expiration_date", "cvv"),
-        ("card_number", "card_holder", None, "cvv"),
-        ("card_number", "card_holder", "expiration_date", None),
+        (None, "card_holder", "expiration_date", "cvv"),  # Missing card number
+        ("card_number", None, "expiration_date", "cvv"),  # Missing card holder
+        ("card_number", "card_holder", None, "cvv"),  # Missing expirationr
+        ("card_number", "card_holder", "expiration_date", None),  # Missing cvv
     ]
 )
 def test_create_credit_card_missing_property(
