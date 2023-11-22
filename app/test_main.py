@@ -16,7 +16,7 @@ def test_create_credit_card():
         "cvv": "string",
     }
     response = client.post(
-        "/api/v1/credit-card",
+        "/api/v1/credit-cards",
         json=json,
     )
     assert response.status_code == status.HTTP_201_CREATED
@@ -40,7 +40,24 @@ def test_create_credit_card_missing_property(
         "cvv": cvv,
     }
     response = client.post(
-        "/api/v1/credit-card",
+        "/api/v1/credit-cards",
         json=json,
     )
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+def test_list_credit_card():
+    response = client.get("/api/v1/credit-cards")
+    assert response.status_code == status.HTTP_200_OK
+
+
+@parameterized.expand(
+    [
+        (1, status.HTTP_200_OK),
+        (-1, status.HTTP_404_NOT_FOUND),  # Non existing,
+        ("non_numeric", status.HTTP_422_UNPROCESSABLE_ENTITY),  # String instead
+    ]
+)
+def test_detail_credit_card(id, status_code):
+    response = client.get(f"/api/v1/credit-cards/{id}")
+    assert response.status_code == status_code
