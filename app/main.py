@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, status
+from fastapi import Depends, FastAPI, HTTPException, status
 from config.database import Base, SessionLocal, engine
 
 from model.credit_card import CreditCard
@@ -52,3 +52,14 @@ def list_credit_cards(
         "total_pages": total_pages,
         "total": total_count,
     }
+
+
+@app.get("/api/v1/credit-cards/{id}")
+def list_credit_cards(credit_card_id: int, db: Session = Depends(get_db)):
+    db_credit_card = (
+        db.query(CreditCard).filter(CreditCard.id == credit_card_id).first()
+    )
+
+    if db_credit_card is None:
+        raise HTTPException(status_code=404, detail="Credit card not found")
+    return db_credit_card
