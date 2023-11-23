@@ -13,6 +13,19 @@ class CreditCardCreate(BaseModel):
         cc = ValidateCreditCard(self.card_number)
         return cc.is_valid()
 
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "card_number": "4539578763621486",
+                    "card_holder": "John Doe",
+                    "expiration_date": "02/2026",
+                    "cvv": "012",
+                }
+            ]
+        }
+    }
+
 
 class CreditCardDto(CreditCardCreate, BaseModel):
     id: int
