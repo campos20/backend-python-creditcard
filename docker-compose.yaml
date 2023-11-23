@@ -1,0 +1,20 @@
+version: "3"
+services:
+  credit-card-keycloak:
+    container_name: credit-card-keycloak
+    image: quay.io/keycloak/keycloak:22.0.5
+    environment:
+      KEYCLOAK_ADMIN: keycloak
+      KEYCLOAK_ADMIN_PASSWORD: keycloak
+    ports:
+      - "8092:8080"
+    command: start-dev
+  credit-card-configuration:
+    container_name: credit-card-configuration
+    image: python:3.8-slim-buster
+    volumes:
+      - "./keycloak/keycloak_configuration.py/:/keycloak_configuration.py"
+    entrypoint: sh -c "pip3 install requests;python keycloak_configuration.py"
+    network_mode: host
+    depends_on:
+      - credit-card-keycloak
