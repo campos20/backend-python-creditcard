@@ -10,6 +10,7 @@ python = "^3.11"
 fastapi = "^0.104.1"
 uvicorn = {extras = ["standard"], version = "^0.24.0.post1"}
 sqlalchemy = "^2.0.23"
+python-creditcard = {git = "https://github.com/maistodos/python-creditcard.git", rev = "main"}
 
 
 [tool.poetry.group.dev.dependencies]

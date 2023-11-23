@@ -557,6 +557,21 @@ pluggy = ">=0.12,<2.0"
 testing = ["argcomplete", "attrs (>=19.2.0)", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "setuptools", "xmlschema"]
 
 [[package]]
+name = "python-creditcard"
+version = "0.0.1"
+description = "A simple credit cards validation library in Python"
+optional = false
+python-versions = ">=3.7"
+files = []
+develop = false
+
+[package.source]
+type = "git"
+url = "https://github.com/maistodos/python-creditcard.git"
+reference = "main"
+resolved_reference = "6b6bcc5d975985337c35e5c1a4f87d861bcac731"
+
+[[package]]
 name = "python-dotenv"
 version = "1.0.0"
 description = "Read key-value pairs from a .env file and set them as environment variables"
@@ -995,4 +1010,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "90b3cd64054b2f534925b5b0e7591e424f7754693b827c3ab42bc7cd42463828"
+content-hash = "ff0b2da6f24f2fed63885b46ce09a8625d0fbd0de0ef0cb5cc3cc7f466676874"

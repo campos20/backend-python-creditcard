@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from helper.page_helper import create_page
 
 from model.credit_card import CreditCard
@@ -8,6 +8,12 @@ from schemas import CreditCardCreate, CreditCardDto
 
 
 def create_credit_card(credit_card_create: CreditCardCreate, db: Session):
+    if not credit_card_create.is_valid():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Credit card number '{credit_card_create.card_number}' is not valid",
+        )
+
     db_credit_card = CreditCard(**credit_card_create.model_dump())
 
     db.add(db_credit_card)
