@@ -3,8 +3,11 @@ from fastapi.testclient import TestClient
 from fastapi import status
 
 from parameterized import parameterized
+from config.constants_config import EXPIRATION_DT_FORMAT
 
 from main import app
+
+from dateutil.relativedelta import relativedelta
 
 client = TestClient(app)
 
@@ -28,20 +31,49 @@ def test_create_credit_card():
 
 @parameterized.expand(
     [
-        ("card_number"),
-        ("card_holder"),
-        ("expiration_date"),
-        ("cvv"),
+        (
+            "expiration_date",  # Expired card
+            (date.today() - relativedelta(months=1)).strftime(EXPIRATION_DT_FORMAT),
+            status.HTTP_400_BAD_REQUEST,
+        ),
+        (
+            "card_number",  # Invalid card number
+            "0123456789",
+            status.HTTP_400_BAD_REQUEST,
+        ),
+        (
+            "card_holder",  # Small size card holder
+            "A",
+            status.HTTP_422_UNPROCESSABLE_ENTITY,
+        ),
     ]
 )
-def test_create_credit_card_missing_property(field_name):
+def test_create_credit_card_fail(field_name, new_value, status_code):
+    json = VALID_CREDIT_CARD | {field_name: new_value}
+    response = client.post(
+        "/api/v1/credit-cards",
+        json=json,
+    )
+    assert response.status_code == status_code
+
+
+@parameterized.expand(
+    [
+        ("card_number", status.HTTP_422_UNPROCESSABLE_ENTITY),
+        ("card_holder", status.HTTP_422_UNPROCESSABLE_ENTITY),
+        ("expiration_date", status.HTTP_422_UNPROCESSABLE_ENTITY),
+        ("cvv", status.HTTP_201_CREATED),  # CVV is optional
+    ]
+)
+def test_create_credit_card_missing_property(field_name, status_code):
+    # The | operator merges the dict, making one of the fields as None
     json = VALID_CREDIT_CARD | {field_name: None}
 
     response = client.post(
         "/api/v1/credit-cards",
         json=json,
     )
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert response.status_code == status_code
 
 
 @parameterized.expand(

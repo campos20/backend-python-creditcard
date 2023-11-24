@@ -1,4 +1,5 @@
-from pydantic import BaseModel, validator
+from typing import Optional
+from pydantic import BaseModel, Field, validator
 from datetime import datetime
 
 from creditcard import CreditCard as ValidateCreditCard
@@ -8,9 +9,9 @@ from config.constants_config import EXPIRATION_DT_FORMAT
 
 class CreditCardCreate(BaseModel):
     card_number: str
-    card_holder: str
+    card_holder: str = Field(..., min_length=3)
     expiration_date: str
-    cvv: str
+    cvv: Optional[str] = Field(None, min_length=3, max_length=3)
 
     def is_valid(self):
         cc = ValidateCreditCard(self.card_number)

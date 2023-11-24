@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from schemas import CreditCardCreate, CreditCardDto
 
-from dateutil import relativedelta
+from dateutil.relativedelta import relativedelta
 
 
 def create_credit_card(credit_card_create: CreditCardCreate, db: Session):
@@ -21,8 +21,8 @@ def create_credit_card(credit_card_create: CreditCardCreate, db: Session):
     # Expiration date as the last day of month
     expiration_date = (
         datetime.strptime(credit_card_create.expiration_date, EXPIRATION_DT_FORMAT)
-        + relativedelta.relativedelta(months=1)
-        - relativedelta.relativedelta(days=1)
+        + relativedelta(months=1)
+        - relativedelta(days=1)
     ).date()
 
     if expiration_date < date.today():
