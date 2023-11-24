@@ -1,7 +1,4 @@
-from config.database_config import Base, SessionLocal, engine
-
-
-Base.metadata.create_all(bind=engine)
+from config.database_config import SessionLocal
 
 
 def get_db():

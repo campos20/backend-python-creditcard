@@ -7,6 +7,11 @@ import service.credit_card_service as credit_card_service
 
 from sqlalchemy.orm import Session
 
+from config.database_config import Base, engine
+
+
+Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI()
 
