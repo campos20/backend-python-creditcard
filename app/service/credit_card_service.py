@@ -1,6 +1,7 @@
 from datetime import datetime, date
 from fastapi import HTTPException, status
 from config.constants_config import EXPIRATION_DT_FORMAT
+from helper.hash_helper import hash_all_but_last_n_chars
 from helper.page_helper import create_page
 
 from model.credit_card import CreditCard
@@ -33,12 +34,15 @@ def create_credit_card(credit_card_create: CreditCardCreate, db: Session):
     db_credit_card = CreditCard(**credit_card_create.model_dump())
     db_credit_card.expiration_date = expiration_date
     db_credit_card.brand = credit_card_create.get_brand()
+    db_credit_card.card_number = hash_all_but_last_n_chars(
+        credit_card_create.card_number, 4
+    )
 
     db.add(db_credit_card)
     db.commit()
     db.refresh(db_credit_card)
 
-    return CreditCardDto(**credit_card_create.model_dump(), id=db_credit_card.id)
+    return _credit_card_to_dto(db_credit_card)
 
 
 def list_credit_cards(page: int, page_size: int, db: Session):
