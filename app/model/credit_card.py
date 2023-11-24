@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Date, Integer, String
 
 from config.database_config import Base
 
@@ -9,5 +9,5 @@ class CreditCard(Base):
     id = Column(Integer, primary_key=True, index=True)
     card_number = Column(String, index=True)
     card_holder = Column(String)
-    expiration_date = Column(String)
+    expiration_date = Column(Date)
     cvv = Column(String)

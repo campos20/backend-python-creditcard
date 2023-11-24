@@ -1,10 +1,14 @@
+from datetime import datetime
 from fastapi import HTTPException, status
+from config.constants_config import EXPIRATION_DT_FORMAT
 from helper.page_helper import create_page
 
 from model.credit_card import CreditCard
 from sqlalchemy.orm import Session
 
 from schemas import CreditCardCreate, CreditCardDto
+
+from dateutil import relativedelta
 
 
 def create_credit_card(credit_card_create: CreditCardCreate, db: Session):
@@ -14,7 +18,15 @@ def create_credit_card(credit_card_create: CreditCardCreate, db: Session):
             detail=f"Credit card number '{credit_card_create.card_number}' is not valid",
         )
 
+    # Expiration date as the last day of month
+    expiration_date = (
+        datetime.strptime(credit_card_create.expiration_date, EXPIRATION_DT_FORMAT)
+        + relativedelta.relativedelta(months=1)
+        - relativedelta.relativedelta(days=1)
+    ).date()
+
     db_credit_card = CreditCard(**credit_card_create.model_dump())
+    db_credit_card.expiration_date = expiration_date
 
     db.add(db_credit_card)
     db.commit()
