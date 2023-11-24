@@ -41,8 +41,7 @@ def list_credit_cards(page: int, page_size: int, db: Session):
 
     items = db.query(CreditCard).offset(offset).limit(page_size).all()
 
-    # Pydantically parse objects to avoid leaking details of the model
-    content = [CreditCardDto(**item.__dict__) for item in items]
+    content = [_credit_card_to_dto(item) for item in items]
 
     return create_page(content, page, page_size, total_count)
 
@@ -54,4 +53,16 @@ def detail_credit_card(credit_card_id: int, db: Session):
 
     if db_credit_card is None:
         raise HTTPException(status_code=404, detail="Credit card not found")
-    return db_credit_card
+    return _credit_card_to_dto(db_credit_card)
+
+
+def _credit_card_to_dto(item: CreditCard):
+    # Pydantically parse objects to avoid leaking details of the model
+
+    return CreditCardDto(
+        card_number=item.card_number,
+        card_holder=item.card_holder,
+        cvv=item.cvv,
+        expiration_date=item.expiration_date.strftime(EXPIRATION_DT_FORMAT),
+        id=item.id,
+    )
