@@ -1,3 +1,4 @@
+from datetime import date
 from fastapi.testclient import TestClient
 from fastapi import status
 
@@ -7,38 +8,35 @@ from main import app
 
 client = TestClient(app)
 
+today = date.today()
+
+VALID_CREDIT_CARD = {
+    "card_holder": "John Doe",
+    "card_number": "4539578763621486",
+    "cvv": "012",
+    "expiration_date": f"{today.month}/{today.year+1}",
+}
+
 
 def test_create_credit_card():
-    json = {
-        "card_number": "string",
-        "card_holder": "string",
-        "expiration_date": "string",
-        "cvv": "string",
-    }
     response = client.post(
         "/api/v1/credit-cards",
-        json=json,
+        json=VALID_CREDIT_CARD,
     )
     assert response.status_code == status.HTTP_201_CREATED
 
 
 @parameterized.expand(
     [
-        (None, "card_holder", "expiration_date", "cvv"),  # Missing card number
-        ("card_number", None, "expiration_date", "cvv"),  # Missing card holder
-        ("card_number", "card_holder", None, "cvv"),  # Missing expirationr
-        ("card_number", "card_holder", "expiration_date", None),  # Missing cvv
+        ("card_number"),
+        ("card_holder"),
+        ("expiration_date"),
+        ("cvv"),
     ]
 )
-def test_create_credit_card_missing_property(
-    card_number, card_holder, expiration_date, cvv
-):
-    json = {
-        "card_number": card_number,
-        "card_holder": card_holder,
-        "expiration_date": expiration_date,
-        "cvv": cvv,
-    }
+def test_create_credit_card_missing_property(field_name):
+    json = VALID_CREDIT_CARD | {field_name: None}
+
     response = client.post(
         "/api/v1/credit-cards",
         json=json,

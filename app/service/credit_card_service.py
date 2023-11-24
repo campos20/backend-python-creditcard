@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from fastapi import HTTPException, status
 from config.constants_config import EXPIRATION_DT_FORMAT
 from helper.page_helper import create_page
@@ -24,6 +24,11 @@ def create_credit_card(credit_card_create: CreditCardCreate, db: Session):
         + relativedelta.relativedelta(months=1)
         - relativedelta.relativedelta(days=1)
     ).date()
+
+    if expiration_date < date.today():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Credit card is expired"
+        )
 
     db_credit_card = CreditCard(**credit_card_create.model_dump())
     db_credit_card.expiration_date = expiration_date
@@ -52,7 +57,9 @@ def detail_credit_card(credit_card_id: int, db: Session):
     )
 
     if db_credit_card is None:
-        raise HTTPException(status_code=404, detail="Credit card not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Credit card not found"
+        )
     return _credit_card_to_dto(db_credit_card)
 
 
@@ -60,9 +67,6 @@ def _credit_card_to_dto(item: CreditCard):
     # Pydantically parse objects to avoid leaking details of the model
 
     return CreditCardDto(
-        card_number=item.card_number,
-        card_holder=item.card_holder,
-        cvv=item.cvv,
-        expiration_date=item.expiration_date.strftime(EXPIRATION_DT_FORMAT),
-        id=item.id,
+        **item.__dict__
+        | {"expiration_date": item.expiration_date.strftime(EXPIRATION_DT_FORMAT)}
     )
