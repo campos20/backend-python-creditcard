@@ -11,7 +11,7 @@ class CreditCardCreate(BaseModel):
     card_number: str
     card_holder: str = Field(..., min_length=3)
     expiration_date: str
-    cvv: Optional[str] = Field(None, min_length=3, max_length=3)
+    cvv: Optional[str] = Field(None, pattern=r"[0-9]+", min_length=3, max_length=4)
 
     def is_valid(self):
         cc = ValidateCreditCard(self.card_number)

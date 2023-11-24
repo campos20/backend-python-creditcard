@@ -46,6 +46,21 @@ def test_create_credit_card():
             "A",
             status.HTTP_422_UNPROCESSABLE_ENTITY,
         ),
+        (
+            "cvv",  # Big size cvv
+            "12345",
+            status.HTTP_422_UNPROCESSABLE_ENTITY,
+        ),
+        (
+            "cvv",  # Small size cvv
+            "12",
+            status.HTTP_422_UNPROCESSABLE_ENTITY,
+        ),
+        (
+            "cvv",  # Non numeric cvv
+            "abc",
+            status.HTTP_422_UNPROCESSABLE_ENTITY,
+        ),
     ]
 )
 def test_create_credit_card_fail(field_name, new_value, status_code):
