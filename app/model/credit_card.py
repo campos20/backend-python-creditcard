@@ -11,3 +11,4 @@ class CreditCard(Base):
     card_holder = Column(String)
     expiration_date = Column(Date)
     cvv = Column(String)
+    brand = Column(String)

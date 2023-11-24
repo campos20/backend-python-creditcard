@@ -17,6 +17,10 @@ class CreditCardCreate(BaseModel):
         cc = ValidateCreditCard(self.card_number)
         return cc.is_valid()
 
+    def get_brand(self):
+        cc = ValidateCreditCard(self.card_number)
+        return cc.get_brand()
+
     @validator("expiration_date")
     def parse_expiration_date(cls, v):
         """Validates expiration_date as mm/yyyy"""

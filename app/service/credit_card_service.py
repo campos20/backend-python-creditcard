@@ -32,6 +32,7 @@ def create_credit_card(credit_card_create: CreditCardCreate, db: Session):
 
     db_credit_card = CreditCard(**credit_card_create.model_dump())
     db_credit_card.expiration_date = expiration_date
+    db_credit_card.brand = credit_card_create.get_brand()
 
     db.add(db_credit_card)
     db.commit()
