@@ -8,7 +8,7 @@
 
 ## Get started
 
-This assumes you already cloned the repo and navigated to it.
+This assumes you already cloned the repo and navigated to it. Also, that you started containers following the root README.md instructions.
 
 - Navigate to the app folder
 
