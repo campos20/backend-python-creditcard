@@ -25,9 +25,3 @@ password=pass
 Testing database uses the port 5433. You can find this configuration by checking `.env` file (in the app folder) and also `docker-compose.yaml`.
 
 - Navigate to the `app` folder and follow the instructions in the README.md there.
-
-## TODOs
-
-These TODOs were left on purpose due to time restrictions:
-
-- Authentication and authorization (we could use keycloak or natively sign a token)

@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Python 3.11 (you can use pyenv to select correct version).
+- Python 3.9 (you can use pyenv to select correct version).
 
 - [virtualenv](https://pypi.org/project/virtualenv/)
 
