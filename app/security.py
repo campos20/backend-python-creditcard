@@ -3,7 +3,9 @@ import uuid
 
 import jwt
 
-SECRET_KEY = "mysecretkey"
+from config.env_var_config import SECRET_KEY
+
+ALGORITHM = "HS512"
 
 
 def generate_jwt_for(target_id):
@@ -16,9 +18,9 @@ def generate_jwt_for(target_id):
             "iat": datetime.datetime.now(),
         },
         SECRET_KEY,
-        algorithm="HS512",
+        algorithm=ALGORITHM,
     )
 
 
 def decode_jwt_token(token):
-    return jwt.decode(token, SECRET_KEY, algorithms=["HS512"])
+    return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])

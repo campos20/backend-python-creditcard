@@ -21,10 +21,24 @@ VALID_CREDIT_CARD = {
 }
 
 
+def get_valid_headers():
+    username = password = "admin"
+    data = {"username": username, "password": password}
+    response = client.post(
+        "/token",
+        data=data,
+    )
+    return response.json()["access_token"]
+
+
+VALID_TOKEN = get_valid_headers()
+VALID_HEADERS = {"Authorization": f"Bearer {VALID_TOKEN}"}
+INVALID_HEADERS = {"Authorization": f"Bearer {VALID_TOKEN}invalid"}
+
+
 def test_create_credit_card():
     response = client.post(
-        "/api/v1/credit-cards",
-        json=VALID_CREDIT_CARD,
+        "/api/v1/credit-cards", headers=VALID_HEADERS, json=VALID_CREDIT_CARD
     )
     assert response.status_code == status.HTTP_201_CREATED
 
@@ -67,6 +81,7 @@ def test_create_credit_card_fail(field_name, new_value, status_code):
     json = VALID_CREDIT_CARD | {field_name: new_value}
     response = client.post(
         "/api/v1/credit-cards",
+        headers=VALID_HEADERS,
         json=json,
     )
     assert response.status_code == status_code
@@ -86,6 +101,7 @@ def test_create_credit_card_missing_property(field_name, status_code):
 
     response = client.post(
         "/api/v1/credit-cards",
+        headers=VALID_HEADERS,
         json=json,
     )
     assert response.status_code == status_code
@@ -120,3 +136,18 @@ def test_list_credit_card(page, page_size, stauts_code):
 def test_detail_credit_card(id, status_code):
     response = client.get(f"/api/v1/credit-cards/{id}")
     assert response.status_code == status_code
+
+
+@parameterized.expand(
+    [
+        ("admin", "admin", status.HTTP_200_OK),  # username == password
+        ("admin", "different", status.HTTP_401_UNAUTHORIZED),  # username != password
+    ]
+)
+def test_login(username, password, status_code):
+    data = {"username": username, "password": password}
+    response = client.post(
+        "/token",
+        data=data,
+    )
+    assert status_code == response.status_code
