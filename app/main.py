@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import FastAPI, HTTPException, Query, status, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from config.dependencies_config import get_db
-from schemas import CreditCardCreate
+from schemas import CreditCardCreate, CreditCardDto, TokenResponse
 from security import decode_jwt_token, generate_jwt_for
 
 import service.credit_card_service as credit_card_service
@@ -23,12 +23,15 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     return decode_jwt_token(token)
 
 
-@app.post("/api/v1/credit-cards", status_code=status.HTTP_201_CREATED)
+@app.post(
+    "/api/v1/credit-cards",
+    status_code=status.HTTP_201_CREATED,
+)
 def create_credit_card(
     credit_card_create: CreditCardCreate,
-    _current_user: Annotated[dict, Depends(get_current_user)],  # Only for authorization
+    _: Annotated[dict, Depends(get_current_user)],  # Only for authorization
     db: Session = Depends(get_db),
-):
+) -> CreditCardDto:
     return credit_card_service.create_credit_card(credit_card_create, db)
 
 
@@ -42,12 +45,14 @@ def list_credit_cards(
 
 
 @app.get("/api/v1/credit-cards/{credit_card_id}")
-def detail_credit_card(credit_card_id: int, db: Session = Depends(get_db)):
+def detail_credit_card(
+    credit_card_id: int, db: Session = Depends(get_db)
+) -> CreditCardDto:
     return credit_card_service.detail_credit_card(credit_card_id, db)
 
 
 @app.post("/token")
-def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> TokenResponse:
     username = form_data.username
     password = form_data.password
     if not username or username != password:
@@ -57,4 +62,4 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
         )
     token = generate_jwt_for(username)
 
-    return {"access_token": token, "token_type": "bearer"}
+    return TokenResponse(access_token=token, token_type="bearer")
