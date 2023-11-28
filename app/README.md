@@ -59,3 +59,11 @@ You will need to be in the `app` folder, virtualenv should be activated.
 ```bash
 python -m pytest -o log_cli=true
 ```
+
+## Decisions
+
+Here are some reasonings behind some decisions you will find on this project:
+
+- FastAPI: It is a modern web framework that is quickly becoming one of the most common options for creating backends with Python. It is fast and easy to use.
+- Databases on docker: this is to make this project as plug-n-play and also disposable.
+- We only secured 1 endpoint (a POST to create a credit card) as creating resources are critical. This project also uses it's own signed jwt. Secret key were generated with `openssl rand -hex 32`.
