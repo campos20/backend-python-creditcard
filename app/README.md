@@ -37,6 +37,10 @@ uvicorn main:app --reload
 
 Visit [http://localhost:8000/docs](http://localhost:8000/docs).
 
+## Using the authorization
+
+When you visit [http://localhost:8000/docs](http://localhost:8000/docs), you will notice a gree `Authorize` button. This allows you to use the authorization headers for all the endpoints that requires it.
+
 ## Activate the virtualenv without installing
 
 You only need to run `poetry install` on your first run (or if any package was added to the project).

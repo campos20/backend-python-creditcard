@@ -20,23 +20,15 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    user = decode_jwt_token(token)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return user
+    return decode_jwt_token(token)
 
 
 @app.post("/api/v1/credit-cards", status_code=status.HTTP_201_CREATED)
 def create_credit_card(
     credit_card_create: CreditCardCreate,
-    current_user: Annotated[dict, Depends(get_current_user)],
+    _current_user: Annotated[dict, Depends(get_current_user)],  # Only for authorization
     db: Session = Depends(get_db),
 ):
-    print(current_user)
     return credit_card_service.create_credit_card(credit_card_create, db)
 
 

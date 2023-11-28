@@ -1,5 +1,6 @@
 import datetime
 import uuid
+from fastapi import HTTPException, status
 
 import jwt
 
@@ -23,4 +24,11 @@ def generate_jwt_for(target_id):
 
 
 def decode_jwt_token(token):
-    return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    try:
+        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
