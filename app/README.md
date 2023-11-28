@@ -37,6 +37,10 @@ uvicorn main:app --reload
 
 Visit [http://localhost:8000/docs](http://localhost:8000/docs).
 
+## Using the authorization
+
+When you visit [http://localhost:8000/docs](http://localhost:8000/docs), you will notice a gree `Authorize` button. This allows you to use the authorization headers for all the endpoints that requires it.
+
 ## Activate the virtualenv without installing
 
 You only need to run `poetry install` on your first run (or if any package was added to the project).
@@ -55,3 +59,11 @@ You will need to be in the `app` folder, virtualenv should be activated.
 ```bash
 python -m pytest -o log_cli=true
 ```
+
+## Decisions
+
+Here are some reasonings behind some decisions you will find on this project:
+
+- FastAPI: It is a modern web framework that is quickly becoming one of the most common options for creating backends with Python. It is fast and easy to use.
+- Databases on docker: this is to make this project as plug-n-play and also disposable.
+- We only secured 1 endpoint (a POST to create a credit card) as creating resources are critical. This project also uses it's own signed jwt. Secret key were generated with `openssl rand -hex 32`.

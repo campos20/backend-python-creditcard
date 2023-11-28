@@ -4,6 +4,7 @@ from fastapi import status
 
 from parameterized import parameterized
 from config.constants_config import EXPIRATION_DT_FORMAT
+from config.dependencies_config import get_db
 
 from main import app
 
@@ -21,12 +22,41 @@ VALID_CREDIT_CARD = {
 }
 
 
+def get_valid_headers():
+    username = password = "admin"
+    data = {"username": username, "password": password}
+    response = client.post(
+        "/token",
+        data=data,
+    )
+    return response.json()["access_token"]
+
+
+VALID_TOKEN = get_valid_headers()
+VALID_HEADERS = {"Authorization": f"Bearer {VALID_TOKEN}"}
+INVALID_HEADERS = {"Authorization": f"Bearer {VALID_TOKEN}invalid"}
+
+
 def test_create_credit_card():
     response = client.post(
-        "/api/v1/credit-cards",
-        json=VALID_CREDIT_CARD,
+        "/api/v1/credit-cards", headers=VALID_HEADERS, json=VALID_CREDIT_CARD
     )
     assert response.status_code == status.HTTP_201_CREATED
+
+    credit_card_id = response.json()["id"]
+
+    saved_credit_card = client.get(f"/api/v1/credit-cards/{credit_card_id}").json()
+
+    # We should save the password number in a hashed way
+    assert saved_credit_card["card_number"].startswith("X")
+    assert saved_credit_card["card_number"] != VALID_CREDIT_CARD["card_number"]
+
+
+def test_create_credit_card_wrong_auth():
+    response = client.post(
+        "/api/v1/credit-cards", headers=INVALID_HEADERS, json=VALID_CREDIT_CARD
+    )
+    assert status.HTTP_401_UNAUTHORIZED == response.status_code
 
 
 @parameterized.expand(
@@ -67,6 +97,7 @@ def test_create_credit_card_fail(field_name, new_value, status_code):
     json = VALID_CREDIT_CARD | {field_name: new_value}
     response = client.post(
         "/api/v1/credit-cards",
+        headers=VALID_HEADERS,
         json=json,
     )
     assert response.status_code == status_code
@@ -86,6 +117,7 @@ def test_create_credit_card_missing_property(field_name, status_code):
 
     response = client.post(
         "/api/v1/credit-cards",
+        headers=VALID_HEADERS,
         json=json,
     )
     assert response.status_code == status_code
@@ -120,3 +152,18 @@ def test_list_credit_card(page, page_size, stauts_code):
 def test_detail_credit_card(id, status_code):
     response = client.get(f"/api/v1/credit-cards/{id}")
     assert response.status_code == status_code
+
+
+@parameterized.expand(
+    [
+        ("admin", "admin", status.HTTP_200_OK),  # username == password
+        ("admin", "different", status.HTTP_401_UNAUTHORIZED),  # username != password
+    ]
+)
+def test_login(username, password, status_code):
+    data = {"username": username, "password": password}
+    response = client.post(
+        "/token",
+        data=data,
+    )
+    assert status_code == response.status_code

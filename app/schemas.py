@@ -43,3 +43,8 @@ class CreditCardCreate(BaseModel):
 
 class CreditCardDto(CreditCardCreate, BaseModel):
     id: int
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
